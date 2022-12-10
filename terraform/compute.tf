@@ -8,3 +8,12 @@ resource "google_compute_managed_ssl_certificate" "main" {
     domains = [var.domain]
   }
 }
+
+resource "google_compute_region_network_endpoint_group" "cloudrun_neg" {
+  name                  = "${local.name}-neg"
+  region                = var.region
+  network_endpoint_type = "SERVERLESS"
+  cloud_run {
+    service = google_cloud_run_service.main.name
+  }
+}
