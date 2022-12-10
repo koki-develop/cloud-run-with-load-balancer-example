@@ -29,3 +29,8 @@ resource "google_compute_backend_service" "main" {
     group = google_compute_region_network_endpoint_group.cloudrun_neg.id
   }
 }
+
+resource "google_compute_url_map" "main" {
+  name            = "${local.name}-urlmap"
+  default_service = google_compute_backend_service.main.id
+}
