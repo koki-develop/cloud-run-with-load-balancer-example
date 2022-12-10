@@ -40,3 +40,10 @@ resource "google_compute_target_https_proxy" "main" {
   url_map          = google_compute_url_map.main.id
   ssl_certificates = [google_compute_managed_ssl_certificate.main.id]
 }
+
+resource "google_compute_global_forwarding_rule" "main" {
+  name       = "${local.name}-lb"
+  target     = google_compute_target_https_proxy.main.id
+  port_range = "443"
+  ip_address = google_compute_global_address.main.address
+}
