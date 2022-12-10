@@ -47,3 +47,25 @@ resource "google_compute_global_forwarding_rule" "main" {
   port_range = "443"
   ip_address = google_compute_global_address.main.address
 }
+
+resource "google_compute_url_map" "http_to_https" {
+  name = "${local.name}-http-to-https"
+
+  default_url_redirect {
+    https_redirect         = true
+    redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
+    strip_query            = false
+  }
+}
+
+resource "google_compute_target_http_proxy" "http_to_https" {
+  name    = "${local.name}-http-to-https"
+  url_map = google_compute_url_map.http_to_https.id
+}
+
+resource "google_compute_global_forwarding_rule" "http_to_https" {
+  name       = "${local.name}-lb-http-to-https"
+  target     = google_compute_target_http_proxy.http_to_https.id
+  port_range = "80"
+  ip_address = google_compute_global_address.main.address
+}
